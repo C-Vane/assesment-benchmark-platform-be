@@ -20,12 +20,15 @@ examsRouter.post("/start/", [check("candidateName").exists().withMessage("Candid
       let allQuestions = questionsDB;
       let num = 0;
       if (time) {
-        for (let sum = 0; sum < time * 60; sum++) {
-          num = Math.floor(Math.random() * allQuestions.length + 1);
-          allQuestions[num];
-          currentQuestions.push(allQuestions[num]);
+        for (let sum = 0; sum <= time * 60 && allQuestions.length > 0; sum++) {
+          num = Math.floor(Math.random() * allQuestions.length);
+          if (allQuestions[num].duration <= time * 60 - sum) {
+            allQuestions[num];
+            currentQuestions.push(allQuestions[num]);
+            sum = sum + allQuestions[num].duration;
+          }
           allQuestions.splice(num, 1);
-          sum = sum - 1 + allQuestions[num].duration;
+          sum--;
         }
       } else {
         for (let i = 0; i < 5; i++) {
