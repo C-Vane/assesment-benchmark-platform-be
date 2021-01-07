@@ -1,4 +1,4 @@
-### Assesment and Benchmark Platform
+### <h1> Assesment and Benchmark Platform</h1>
 
 Assessment &amp; Benchmarking platform , used to assess the skill level of a candidate through a series of multi choice questions and answers.
 The application should guide the candidate through a set of questions, collect all the provided answers and show him the result of his own assessment
