@@ -13,6 +13,6 @@
         "examRetakes": 1,
         "result": 100,
         "lastExamDate": "2021-01-07T19:09:48.561Z",
-        "examCompleted": "PASS"
+        "examStatus": "PASS"
     }
 ]

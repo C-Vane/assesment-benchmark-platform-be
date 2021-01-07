@@ -108,7 +108,7 @@ examsRouter.post("/:id/answers", [check("question").isInt().exists().withMessage
               ? {
                   ...candidates[candidateIndex],
                   lastExamDate: exam.examDate,
-                  examCompleted: exam.result >= 60 ? "PASS" : "FAIL",
+                  examStatus: exam.result >= 60 ? "PASS" : "FAIL",
                   result: exam.result,
                   examRetakes: candidates[candidateIndex].examRetakes + 1,
                 }

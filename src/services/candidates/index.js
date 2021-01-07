@@ -7,9 +7,9 @@ const candidatesRouter = express.Router();
 candidatesRouter.get("/", async (req, res, next) => {
   try {
     const all = await getCandidates();
-    let candidates;
+    let candidates = all;
     if (req.query && req.query.result) {
-      candidates = all.find((candidate) => candidate.result === req.query.result);
+      candidates = all.find((candidate) => candidate.examStatus === req.query.result);
     }
     res.send(candidates);
   } catch (error) {
