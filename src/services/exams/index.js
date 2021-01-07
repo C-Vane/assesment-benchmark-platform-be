@@ -9,7 +9,7 @@ examsRouter.post("/start/", [check("candidateID").exists().withMessage("Candidat
     const errors = validationResult(req);
     const candidates = await getCandidates();
     const candidate = candidates.find((cand) => cand._id === req.body.candidateID);
-    if (!errors.isEmpty() && candidate) {
+    if (!errors.isEmpty() && !candidate) {
       const err = new Error();
       err.message = errors;
       err.httpStatusCode = 400;
