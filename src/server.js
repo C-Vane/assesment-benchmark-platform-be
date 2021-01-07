@@ -9,6 +9,7 @@ const { join } = require("path");
 const { notFoundHandler, badRequestHandler, genericErrorHandler } = require("./errorHandlers");
 const examsRouter = require("./services/exams");
 const questionsRouter = require("./services/questions");
+const candidatesRouter = require("./services/candidates");
 
 const server = express();
 
@@ -43,6 +44,7 @@ server.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerDoc));
 ///////////////////////////////// this is were the magic will happen
 server.use("/exam", examsRouter);
 server.use("/questions", questionsRouter);
+server.use("/candidates", candidatesRouter);
 // ERROR HANDLERS
 server.use(badRequestHandler);
 server.use(notFoundHandler);

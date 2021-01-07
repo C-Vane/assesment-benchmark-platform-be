@@ -1,18 +1,26 @@
 const express = require("express");
 const { check, validationResult } = require("express-validator");
-const { getExams, writeExams, getQuestions } = require("../../utilites");
+const { getExams, writeExams, getQuestions, getCandidates, writeCandidates } = require("../../utilites");
 const uniqid = require("uniqid");
 const examsRouter = express.Router();
 
-examsRouter.post("/start/", [check("candidateName").exists().withMessage("Candidate name must be given")], async (req, res, next) => {
+examsRouter.post("/start/", [check("candidateID").exists().withMessage("Candidate ID must be given")], async (req, res, next) => {
   try {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+    const candidates = await getCandidates();
+    const candidate = candidates.find((cand) => cand._id === req.body.candidateID);
+    if (!errors.isEmpty() && candidate.length < 1) {
       const err = new Error();
       err.message = errors;
       err.httpStatusCode = 400;
       next(err);
     } else {
+      if (candidate.examRetakes > 4) {
+        const err = new Error();
+        err.message = "Took too many Exams";
+        err.httpStatusCode = 429;
+        return next(err);
+      }
       const questionsDB = await getQuestions();
       const examsDB = await getExams();
       let time = req.query.time;
@@ -38,7 +46,8 @@ examsRouter.post("/start/", [check("candidateName").exists().withMessage("Candid
         }
       }
       const exam = {
-        ...req.body,
+        name: candidate.name,
+        candidateId: candidate._id,
         totalDuration: parseInt(time),
         _id: uniqid(),
         examDate: new Date(),
@@ -48,7 +57,11 @@ examsRouter.post("/start/", [check("candidateName").exists().withMessage("Candid
       };
       await writeExams([...examsDB, exam]);
       currentQuestions.forEach((question) => {
-        question.answers.forEach((answer) => delete answer.isCorrect);
+        question.correctAnswer = 0;
+        question.answers.forEach((answer) => {
+          answer.isCorrect && question.correctAnswer++;
+          delete answer.isCorrect;
+        });
       });
       res.status(201).send({
         _id: exam._id,
@@ -73,7 +86,7 @@ examsRouter.post("/:id/answers", [check("question").isInt().exists().withMessage
       if (currentIndex !== -1 && req.body.question < examsDB[currentIndex].questions.length && examsDB[currentIndex].questions[req.body.question].providedAnswer === undefined) {
         const currentquestion = { ...examsDB[currentIndex].questions[req.body.question], providedAnswer: req.body.answer || false };
         const questions = [...examsDB[currentIndex].questions.slice(0, req.body.question), currentquestion, ...examsDB[currentIndex].questions.slice(req.body.question + 1)];
-        const value = (examsDB[currentIndex].questions[req.body.question].duration / examsDB[currentIndex].totalDuration / 3) * 5;
+        const value = examsDB[currentIndex].totalDuration ? (examsDB[currentIndex].questions[req.body.question].duration / examsDB[currentIndex].totalDuration / 3) * 5 : 20;
         const exam = {
           ...examsDB[currentIndex],
           questions,
@@ -86,6 +99,27 @@ examsRouter.post("/:id/answers", [check("question").isInt().exists().withMessage
             : examsDB[currentIndex].result,
           isCompleted: questions.every((question) => question.providedAnswer !== undefined) ? true : false,
         };
+        if (exam.isCompleted) {
+          const candidates = await getCandidates();
+          const candidateIndex = candidates.findIndex((cand) => cand._id === exam.candidateId);
+          const updateCandidate = [
+            ...candidates.slice(0, candidateIndex),
+            exam.result > candidates[candidateIndex].result
+              ? {
+                  ...candidates[candidateIndex],
+                  lastExamDate: exam.examDate,
+                  examCompleted: exam.result >= 60 ? "PASS" : "FAIL",
+                  result: exam.result,
+                  examRetakes: candidates[candidateIndex].examRetakes + 1,
+                }
+              : {
+                  ...candidates[candidateIndex],
+                  examRetakes: candidates[candidateIndex].examRetakes + 1,
+                },
+            ...candidates.slice(candidateIndex + 1),
+          ];
+          await writeCandidates(updateCandidate);
+        }
         await writeExams([...examsDB.slice(0, currentIndex), exam, ...examsDB.slice(currentIndex + 1)]);
         res.status(201).send(
           exam.isCompleted
@@ -114,7 +148,10 @@ examsRouter.get("/:id/", async (req, res, next) => {
     if (currentExam) {
       let questions = [];
       currentExam.questions.forEach((question) => {
-        questions.push({ ...question, answers: [question.answers[question.providedAnswer]] });
+        questions.push({
+          ...question,
+          answers: Array.isArray(question.providedAnswer) ? question.providedAnswer.map((answer) => question.answers[answer]) : [question.answers[question.providedAnswer]],
+        });
       });
       res.status(200).send({ ...currentExam, questions });
     } else {

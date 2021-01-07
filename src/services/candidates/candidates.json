@@ -1,0 +1,18 @@
+[
+    {
+        "name": "Jane",
+        "surname": "Doe",
+        "email": "example@gmail.com",
+        "yearOfBirth": 1984,
+        "street": "never street,1",
+        "city": "never city",
+        "country": "Neverland",
+        "postalCode": "00000",
+        "_id": "nzojp5ickjn7gdad",
+        "role": "candidate",
+        "examRetakes": 1,
+        "result": 100,
+        "lastExamDate": "2021-01-07T19:09:48.561Z",
+        "examCompleted": "PASS"
+    }
+]

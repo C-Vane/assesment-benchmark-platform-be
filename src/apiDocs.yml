@@ -9,11 +9,10 @@ info:
 
 # tags are used for organizing operations
 tags:
-  - name: admins
-    description: Secured Admin-only calls
   - name: candidates
     description: Operations available to candidates
-
+  - name: admins
+    description: Secured Admin-only calls
 paths:
   /exam/start:
     post:
@@ -32,23 +31,19 @@ paths:
           required: false
           type: number
         - in: body
-          name: Candidate's Name
-          description: name of the candidate taking the exam
+          name: Candidate ID number
+          description: ID number of the candidate taking the exam
           required: true
           schema:
-            items:
-              type: object
-              properties:
-                candidateName:
-                  type: string
-                  example: Jon Doe
+            properties:
+              candidateID:
+                type: string
+                example: nzojp5ickjn7gdad
       responses:
         200:
           description: exam starts
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/examQuestions"
+            $ref: "#/definitions/examQuestions"
         400:
           description: bad input
   /exam/{id}/answers:
@@ -71,17 +66,16 @@ paths:
           name: Answer
           description: index of the question and the index of chosen answer and/or answers
           schema:
-            items:
-              type: object
-              required:
-                - question
-              properties:
-                question:
-                  type: number
-                  example: 1
-                answer:
-                  type: number
-                  example: 1
+            type: object
+            required:
+              - question
+            properties:
+              question:
+                type: number
+                example: 1
+              answer:
+                type: number
+                example: 1
       responses:
         200:
           description: submit answer
@@ -110,9 +104,7 @@ paths:
         200:
           description: Exam status
           schema:
-            type: object
-            items:
-              $ref: "#/definitions/examQuestions"
+            $ref: "#/definitions/examQuestions"
         400:
           description: bad input and/or Incorrect Format or answer for question already provided
   /questions:
@@ -129,7 +121,6 @@ paths:
         200:
           description: All questions
           schema:
-            type: array
             items:
               $ref: "#/definitions/questions"
         400:
@@ -148,8 +139,7 @@ paths:
           name: Question
           description: object with duration, text and answers
           schema:
-            items:
-              $ref: "#/definitions/questions"
+            $ref: "#/definitions/questions"
       responses:
         200:
           description: Exam status
@@ -179,14 +169,12 @@ paths:
           name: Edit Object
           description: object with duration, text and answers
           schema:
-            items:
-              $ref: "#/definitions/questions"
+            $ref: "#/definitions/questions"
       responses:
         200:
           description: All questions
           schema:
-            items:
-              $ref: "#/definitions/questions"
+            $ref: "#/definitions/questions"
         400:
           description: bad input
         404:
@@ -239,7 +227,6 @@ definitions:
         description: from 0 to 100
         example: 100
       questions:
-        type: array
         items:
           $ref: "#/definitions/questionsWanswers"
   questionsWanswers:
@@ -257,9 +244,7 @@ definitions:
         type: string
         example: Laborum elit do anim in velit nostrud culpa do eu est
       answers:
-        type: array
-        items:
-          $ref: "#/definitions/answersWcorrect"
+        $ref: "#/definitions/answersWcorrect"
   questions:
     type: object
     required:
@@ -274,18 +259,14 @@ definitions:
         type: string
         example: Laborum elit do anim in velit nostrud culpa do eu est
       answers:
-        type: array
-        items:
-          $ref: "#/definitions/answers"
+        $ref: "#/definitions/answers"
   answersWcorrect:
-    type: array
     items:
       type: object
       properties:
         text:
           type: string
   answers:
-    type: array
     items:
       type: object
       properties:

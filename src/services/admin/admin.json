@@ -1,0 +1,16 @@
+[
+    {
+        "name": "Vanessa",
+        "surname": "Cattabiani",
+        "email": "vanecattabiani@gmail.com",
+        "yearOfBirth": 1999,
+        "street": "Louise Otto Peters str 3",
+        "city": "Freiburg",
+        "country": "Germany",
+        "postalCode": "79100",
+        "_id": "nzojp5ickjn7gdad",
+        "role": "candidate",
+        "password": "testThis1",
+        "examRetakes": 6
+    }
+]
