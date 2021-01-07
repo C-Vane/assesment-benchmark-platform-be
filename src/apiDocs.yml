@@ -1,0 +1,295 @@
+swagger: "2.0"
+info:
+  description: This is assesment and benchmark platfrom api
+  version: 1.0.0
+  title: Assesment and benchmark platform API
+  # put the contact info for your development or API team
+  contact:
+    email: vanebrunocattabiani@gmail.com
+
+# tags are used for organizing operations
+tags:
+  - name: admins
+    description: Secured Admin-only calls
+  - name: candidates
+    description: Operations available to candidates
+
+paths:
+  /exam/start:
+    post:
+      tags:
+        - candidates
+      summary: start exam
+      operationId: startExam
+      description: |
+        By passing in the candidate name, get 5 random questions and by additinally passing as query the exam duration time The total duration of questions randomly picked for that exam will not exceed the specified duration
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: time
+          description: pass an optional exam duration time
+          required: false
+          type: number
+        - in: body
+          name: Candidate's Name
+          description: name of the candidate taking the exam
+          required: true
+          schema:
+            items:
+              type: object
+              properties:
+                candidateName:
+                  type: string
+                  example: Jon Doe
+      responses:
+        200:
+          description: exam starts
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/examQuestions"
+        400:
+          description: bad input
+  /exam/{id}/answers:
+    post:
+      tags:
+        - candidates
+      summary: submit question answer
+      operationId: submitAnswer
+      description: |
+        By passing in the path the exam id and in the body the index of the question and the index of answer the candidate can answer to any question once
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          required: true
+          name: id
+          description: id of the exam
+          type: string
+        - in: body
+          name: Answer
+          description: index of the question and the index of chosen answer and/or answers
+          schema:
+            items:
+              type: object
+              required:
+                - question
+              properties:
+                question:
+                  type: number
+                  example: 1
+                answer:
+                  type: number
+                  example: 1
+      responses:
+        200:
+          description: submit answer
+          schema:
+            type: string
+            example: Answer Submitted
+        400:
+          description: bad input and/or Incorrect Format or answer for question already provided
+  /exam/{id}:
+    get:
+      tags:
+        - candidates
+      summary: get exam at current status
+      operationId: curretExam
+      description: |
+        By passing in the path the exam id get the exam with result
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          required: true
+          name: id
+          description: id of the exam
+          type: string
+      responses:
+        200:
+          description: Exam status
+          schema:
+            type: object
+            items:
+              $ref: "#/definitions/examQuestions"
+        400:
+          description: bad input and/or Incorrect Format or answer for question already provided
+  /questions:
+    get:
+      tags:
+        - admins
+      summary: get all the questions
+      operationId: getallquestions
+      description: |
+        get all the questions from server
+      produces:
+        - application/json
+      responses:
+        200:
+          description: All questions
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/questions"
+        400:
+          description: bad input
+    post:
+      tags:
+        - admins
+      summary: add a new question to the list
+      operationId: addQuestion
+      description: |
+        By passing in the body the questions and the answers add a new question to the list
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: Question
+          description: object with duration, text and answers
+          schema:
+            items:
+              $ref: "#/definitions/questions"
+      responses:
+        200:
+          description: Exam status
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/questions"
+        400:
+          description: bad input and/or duration,text or answer missing
+  /questions/{questionIndex}:
+    put:
+      tags:
+        - admins
+      summary: Edit question given the index of the question
+      operationId: editQuestion
+      description: |
+        By passing in the path the exam id get the exam with result
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          required: true
+          name: questionIndex
+          description: Index of the question to edit
+          type: string
+        - in: body
+          name: Edit Object
+          description: object with duration, text and answers
+          schema:
+            items:
+              $ref: "#/definitions/questions"
+      responses:
+        200:
+          description: All questions
+          schema:
+            items:
+              $ref: "#/definitions/questions"
+        400:
+          description: bad input
+        404:
+          description: Question not found
+    delete:
+      tags:
+        - admins
+      summary: delete question from question array
+      operationId: delete question
+      description: |
+        question will be deleted by passing in the path the question index
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          required: true
+          name: questionIndex
+          description: index of the question from the total question array
+          type: number
+
+      responses:
+        200:
+          description: Question deleted
+        404:
+          description: Question not found
+
+definitions:
+  examQuestions:
+    type: object
+    required:
+      - _id
+      - questions
+    properties:
+      _id:
+        type: string
+        format: uuid
+        example: nzojpd4ckjmsviis
+      candidatesName:
+        type: string
+        example: Jon Doe
+      totalDuration:
+        type: number
+        example: 30
+        description: total exam duration in min
+      isCompleted:
+        type: boolean
+        example: false
+      results:
+        type: number
+        description: from 0 to 100
+        example: 100
+      questions:
+        type: array
+        items:
+          $ref: "#/definitions/questionsWanswers"
+  questionsWanswers:
+    type: object
+    required:
+      - duration
+      - text
+      - answers
+    properties:
+      duration:
+        type: integer
+        example: 60
+        description: time to complete the question in seconds
+      text:
+        type: string
+        example: Laborum elit do anim in velit nostrud culpa do eu est
+      answers:
+        type: array
+        items:
+          $ref: "#/definitions/answersWcorrect"
+  questions:
+    type: object
+    required:
+      - duration
+      - text
+      - answers
+    properties:
+      duration:
+        type: integer
+        example: 60
+      text:
+        type: string
+        example: Laborum elit do anim in velit nostrud culpa do eu est
+      answers:
+        type: array
+        items:
+          $ref: "#/definitions/answers"
+  answersWcorrect:
+    type: array
+    items:
+      type: object
+      properties:
+        text:
+          type: string
+  answers:
+    type: array
+    items:
+      type: object
+      properties:
+        text:
+          type: string
+        isCorrect:
+          type: boolean
