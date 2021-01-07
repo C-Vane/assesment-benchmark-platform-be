@@ -30,7 +30,7 @@ Company requirements:
   <ul>
     <strong>/exam/{id}/answer</strong>:
     <li>Answer to a question for the given exam {id}, It is not possible to answer to a question twice,<strong> EXTRA</strong> it is possible to have multiple correct answers in a question</li>
-    <li>The waight of a question on a final result is propotiona lto the ammount of time given for each question. </li>
+    <li>The waight of a question on a final result is propotional to the ammount of time given for each question. </li>
     </li>
   </ul>
 
