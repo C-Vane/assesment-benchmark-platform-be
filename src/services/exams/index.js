@@ -104,7 +104,7 @@ examsRouter.post("/:id/answers", [check("question").isInt().exists().withMessage
           const candidateIndex = candidates.findIndex((cand) => cand._id === exam.candidateId);
           const updateCandidate = [
             ...candidates.slice(0, candidateIndex),
-            exam.result > candidates[candidateIndex].result
+            candidates[candidateIndex].result && exam.result >= candidates[candidateIndex].result
               ? {
                   ...candidates[candidateIndex],
                   lastExamDate: exam.examDate,
@@ -114,6 +114,7 @@ examsRouter.post("/:id/answers", [check("question").isInt().exists().withMessage
                 }
               : {
                   ...candidates[candidateIndex],
+                  lastExamDate: exam.examDate,
                   examRetakes: candidates[candidateIndex].examRetakes + 1,
                 },
             ...candidates.slice(candidateIndex + 1),
