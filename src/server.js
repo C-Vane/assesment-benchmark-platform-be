@@ -23,12 +23,13 @@ const corsOptions =
   process.env.NODE_ENV === "production"
     ? {
         origin: function (origin, callback) {
-          if (whiteList.indexOf(origin) !== -1) {
+          console.log(whiteList, origin);
+          if (whiteList.indexOf(origin) !== -1 || !origin) {
             // allowed
             callback(null, true);
           } else {
             // Not allowed
-            callback(new Error("NOT ALLOWED - CORS ISSUES"));
+            callback(new Error("Not allowed by CORS"));
           }
         },
       }
