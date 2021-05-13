@@ -33,14 +33,13 @@ const corsOptions =
         },
       }
     : {};
-
+const swaggerDoc = yaml.load(join(__dirname, "apiDocs.yml"));
+server.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerDoc));
 server.use(helmet());
 server.use(cors(corsOptions)); // CROSS ORIGIN RESOURCE SHARING
 
 //ROUTES
-const swaggerDoc = yaml.load(join(__dirname, "apiDocs.yml"));
 
-server.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerDoc));
 ///////////////////////////////// this is were the magic will happen
 server.use("/exam", examsRouter);
 server.use("/questions", questionsRouter);
