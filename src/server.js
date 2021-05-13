@@ -36,8 +36,8 @@ const corsOptions =
     : {};
 const swaggerDoc = yaml.load(join(__dirname, "apiDocs.yml"));
 server.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerDoc));
-server.use(helmet());
 server.use(cors(corsOptions)); // CROSS ORIGIN RESOURCE SHARING
+server.use(helmet());
 
 //ROUTES
 
