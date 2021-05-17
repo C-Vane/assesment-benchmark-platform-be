@@ -17,23 +17,21 @@ const port = process.env.PORT || 3001; // the fallback is for local development,
 
 server.use(express.json());
 
-const whiteList = process.env.NODE_ENV === "production" ? [process.env.FE_URL_PROD] : [process.env.FE_URL_DEV];
+const whiteList = [process.env.FE_URL_PROD, process.env.FE_URL_DEV];
 
-const corsOptions =
-  process.env.NODE_ENV === "production"
-    ? {
-        origin: function (origin, callback) {
-          console.log(whiteList, origin);
-          if (whiteList.indexOf(origin) !== -1 || !origin) {
-            // allowed
-            callback(null, true);
-          } else {
-            // Not allowed
-            callback(new Error("Not allowed by CORS"));
-          }
-        },
-      }
-    : {};
+const corsOptions = {
+  origin: function (origin, callback) {
+    console.log(whiteList, origin);
+    if (whiteList.indexOf(origin) !== -1 || !origin) {
+      // allowed
+      callback(null, true);
+    } else {
+      // Not allowed
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+};
+
 const swaggerDoc = yaml.load(join(__dirname, "apiDocs.yml"));
 server.use("/docs", swaggerUI.serve, swaggerUI.setup(swaggerDoc));
 server.use(cors(corsOptions)); // CROSS ORIGIN RESOURCE SHARING
