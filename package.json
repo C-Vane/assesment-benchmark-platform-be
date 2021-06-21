@@ -1,5 +1,6 @@
 {
   "name": "assesment-benchmark-platform-be",
+  "author: "Vanessa Cattabiani"
   "version": "1.0.0",
   "description": "Assessment &amp; Benchmarking platform with a series of multi choice questions and answers",
   "main": "index.js",
