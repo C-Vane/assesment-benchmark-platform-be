@@ -1,6 +1,5 @@
 {
   "name": "assesment-benchmark-platform-be",
-  "author: "C-Vane",
   "version": "1.0.0",
   "description": "Assessment &amp; Benchmarking platform with a series of multi choice questions and answers",
   "main": "index.js",
@@ -15,7 +14,7 @@
     "url": "git+https://github.com/C-Vane/assesment-benchmark-platform-be.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Vanessa Cattabiani",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/C-Vane/assesment-benchmark-platform-be/issues"
